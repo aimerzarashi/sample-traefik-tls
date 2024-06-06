@@ -43,6 +43,7 @@ services:
       KEYCLOAK_DATABASE_PASSWORD: password
       KC_HOSTNAME_URL: "https://idp.aimerzarashi.com"
       KC_HOSTNAME_ADMIN_URL: "https://idp.aimerzarashi.com"
+      KC_HOSTNAME_STRICT_BACKCHANNEL: true
     depends_on:
       - db
       - smtp
