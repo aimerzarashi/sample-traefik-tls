@@ -1,11 +1,25 @@
 services:
+  reverse-proxy:
+    image: traefik:v3.0
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik:/etc/traefik:ro
+      - ./logs:/etc/logs
+    environment:
+      - TZ=Asia/Tokyo
+    command:
+      - --accesslog.fields.names.StartUTC=drop
+      - --providers.docker
+  whoami:
+    image: traefik/whoami
   web:
-    container_name: web.localhost
     image: node:20-alpine3.18
     ports:
       - 3000:3000
     depends_on:
-      - db
       - idp
     volumes:
       - ./web:/app
@@ -18,10 +32,7 @@ services:
         npm install;
         npm run dev;
   idp:
-    container_name: idp.localhost
     image: bitnami/keycloak:24
-    ports:
-      - 8080:8080
     environment:
       KEYCLOAK_ADMIN_USER: user
       KEYCLOAK_ADMIN_PASSWORD: bitnami
@@ -30,14 +41,14 @@ services:
       KEYCLOAK_DATABASE_NAME: bitnami_keycloak
       KEYCLOAK_DATABASE_USER: bn_keycloak
       KEYCLOAK_DATABASE_PASSWORD: password
-      KEYCLOAK_EXTRA_ARGS: --import-realm
-    volumes:
-      - ./idp/import:/opt/bitnami/keycloak/data/import
+      KC_HOSTNAME_URL: "https://idp.aimerzarashi.com"
+      KC_HOSTNAME_ADMIN_URL: "https://idp.aimerzarashi.com"
     depends_on:
       - db
+      - smtp
   db:
     container_name: db
-    image: postgres:16.1
+    image: postgres:16.3
     ports:
       - 5432:5432
     restart: always
@@ -48,8 +59,6 @@ services:
     volumes:
       - ./db/data:/var/lib/postgresql/data
   smtp:
-    container_name: smtp.localhost
     image: mailhog/mailhog
     ports:
-      - "1025:1025"
-      - "8025:8025"
+      - 1025:1025
