@@ -49,6 +49,7 @@ services:
       KC_HOSTNAME_STRICT_BACKCHANNEL: true
       KC_HOSTNAME_URL: "https://idp.aimerzarashi.com"
       KC_HOSTNAME_ADMIN_URL: "https://idp.aimerzarashi.com"
+      KEYCLOAK_PROXY: edge
       # KEYCLOAK_PRODUCTION: true
       # KEYCLOAK_ENABLE_HTTPS: true
       # KEYCLOAK_HTTPS_USE_PEM: true
